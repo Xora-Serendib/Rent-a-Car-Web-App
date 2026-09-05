@@ -1,77 +1,76 @@
-# Ceylon Prime Rent A Car — Web Application
+# Danusha Rent A Car — Customer Booking Web Application
 
-A premier, high-converting car rental, chauffeur-driven tour, and fleet management web application inspired by Sri Lanka's leading vehicle rental service ([malkey.lk](https://www.malkey.lk/)).
+5.0★ Google Rated (32 Reviews) • 134/3 Polgasowita Rd, Piliyandala • Hotline: 074 252 6538
+
+A premier, mobile-first car rental booking platform built with **React**, **Vite**, **Tailwind CSS**, **Leaflet Maps**, and **Google Cloud Firestore (Firebase Free Spark Plan)**.
 
 ---
 
 ## 🌟 Key Features
 
-1. **Instant Search & Booking Widget (Hero)**:
-   - Tabbed services: **Self-Drive**, **With Chauffeur**, **Airport Transfer (BIA CMB)**, and **Weddings & VIP**.
-   - Dynamic pickup and drop-off locations across Sri Lanka.
-   - Automatic duration and live price preview.
-
-2. **Complete Fleet Catalog & Filter Engine**:
-   - Filter categories: Economy/General, Premium Sedans, Luxury & VIP (Mercedes/BMW), 4WD & SUVs (Land Cruiser Prado, Fortuner), Passenger Vans (Toyota HiAce KDH), Classic/Vintage Wedding Cars, and Safari Tuk-Tuks.
-   - Real-time rate toggle: **Self-Drive** vs **Chauffeur-Driven**.
-   - Detailed specification pills: Passengers, luggage, transmission, fuel, and air conditioning.
-   - Live multi-currency support: **LKR (Rs.)**, **USD ($)**, **EUR (€)**, **GBP (£)**, and **AUD (A$)**.
-
-3. **Live Interactive Rate & Cost Calculator**:
-   - Interactive slider for rental duration (1 to 30 days) with automatic weekly (-8%) and monthly (-15%) discounts.
-   - Add-on toggles: Collision Damage Waiver (CDW / Zero Excess), Child Safety Seat, Garmin GPS, Additional Driver, and AAC Sri Lanka driving endorsement assistance.
-   - Itemized transparent cost calculation with zero hidden fees.
-
-4. **Multi-Step Online Booking & WhatsApp Synchronization**:
-   - Step 1: Vehicle & Rental Logistics.
-   - Step 2: Extras & Insurance Coverage.
-   - Step 3: Customer Information & Flight Number tracking.
-   - One-click **"Send to WhatsApp Desk"** generating a pre-formatted, detailed reservation message directly to the company WhatsApp hotline.
-
-5. **Tourist Driving Guide & FAQs**:
-   - Legal requirements for foreign driving licenses and IDPs in Sri Lanka.
-   - Automobile Association of Ceylon (AAC) temporary endorsement guide.
-   - Frequently Asked Questions accordion (mileage limits, fuel policy, security deposits, road laws).
-
-6. **Curated Sri Lanka Travel Itineraries**:
-   - Cultural Triangle & Ancient Kingdoms (Sigiriya, Dambulla, Polonnaruwa).
-   - Misty Highlands & Tea Country (Kandy, Nuwara Eliya, Ella).
-   - Golden Southern Coastline & Galle Fort.
-   - Wildlife Safari Expeditions (Yala, Udawalawe).
+1. **Any Location in Sri Lanka & Any Way to Go**:
+   - Interactive Leaflet map with Google Road & Satellite Hybrid tiles.
+   - Search 40+ destinations across all 9 provinces or click anywhere on the island.
+   - Draggable pins for custom pick-up and drop-off points.
+   - 3 Route preferences: 🚀 **Expressway (Fastest)**, 🌊 **Coastal Highway**, ⛰️ **Hill Country & Scenic Byways**.
+   - Add intermediate stopovers / waypoints.
+   - Real-time road distance in **KM**, duration, and expressway toll estimates.
+2. **Real-Time Fleet & Rates**:
+   - Filter by category: Economy, Sedans, Luxury, SUVs, Vans, Wedding cars.
+   - Live availability badges: `Available Now`, `Currently on Hire`, `Maintenance`.
+   - Real-time price updates synced directly from Mr. Danusha's Owner Admin Portal via Firebase Firestore.
+3. **Multi-Step Booking Survey & PDF Voucher**:
+   - 3-step customer survey gathering travel details, license status, and party size.
+   - Automatically downloads official A4 PDF booking voucher.
+   - Automatically launches WhatsApp to Mr. Danusha (`074 252 6538`) with the pre-formatted reservation.
+4. **Mobile & Device Responsive**:
+   - Pixel-perfect layout across iPhones, Android phones, tablets (iPads), and desktop monitors.
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 How to Push to Your GitHub
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (version 18 or higher)
-- npm or pnpm
+Open PowerShell or Command Prompt inside `E:\Projects\danusha-rent-a-car`:
 
-### Run Locally
 ```bash
-# Navigate to the project directory
-cd car-rental-website
+# 1. Create a new repository on your GitHub named "danusha-rent-a-car"
+# 2. Add your GitHub remote (replace <YOUR_GITHUB_USERNAME> with your GitHub handle):
+git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/danusha-rent-a-car.git
 
-# Start the Vite local development server
-npm.cmd run dev
+# 3. Push to GitHub:
+git branch -M main
+git push -u origin main
 ```
-Open your browser at `http://localhost:3000` (or the URL printed in the terminal).
 
-### Production Build
+---
+
+## ☁️ How to Host on Vercel (100% Free)
+
+1. Go to [https://vercel.com/](https://vercel.com/) and log in with your GitHub account.
+2. Click **"Add New..."** → **"Project"**.
+3. Select your `danusha-rent-a-car` repository and click **"Import"**.
+4. Framework Preset will automatically detect **Vite**.
+5. *(Optional)* In **Environment Variables**, add your Firebase keys if you have set up a free Firebase project:
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+   - `VITE_ADMIN_PORTAL_URL` (URL of your deployed admin portal)
+6. Click **"Deploy"**. Your customer website will be live in ~30 seconds!
+
+---
+
+## 🛠️ Local Development
+
 ```bash
+# Install dependencies
+npm.cmd install
+
+# Start local dev server (port 3000)
+npm.cmd run dev
+
+# Build for production
 npm.cmd run build
 ```
-The optimized, static production files will be output to the `dist/` directory, ready to deploy to Vercel, Netlify, Cloudflare Pages, Firebase Hosting, or any standard web server.
-
----
-
-## 🎨 Easy Customization & Rebranding
-
-All company details, fleet vehicles, rates, and services are decoupled into clean, editable JavaScript data files inside `src/data/`:
-
-- **`src/data/companyInfo.js`**: Update company name, phone numbers, WhatsApp hotline, email addresses, office locations, and accreditation badges.
-- **`src/data/fleetData.js`**: Add, edit, or remove vehicles, specifications, daily/weekly rates, excess mileage fees, and photos.
-- **`src/data/servicesData.js`**: Customize company service offerings and features.
-- **`src/data/toursData.js`**: Modify tour packages, driving routes, and recommended vehicle types.
-- **`src/data/faqsData.js`**: Update rental terms, payment rules, and questions.
-- **`src/utils/currency.js`**: Adjust live currency exchange rates or add new currencies.
