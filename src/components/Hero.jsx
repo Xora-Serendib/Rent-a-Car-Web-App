@@ -8,12 +8,14 @@ import { companyInfo } from "../data/companyInfo";
 import { fleetCategories } from "../data/fleetData";
 import { WhatsAppIcon } from "./icons/WhatsAppIcon";
 import { getRouteDetails } from "../utils/routeCalculator";
+import { destinationGroups, popularSriLankaDestinations } from "../utils/sriLankaGeo";
 import RouteMapModal from "./RouteMapModal";
 
 export default function Hero({ onSearchSubmit, onQuickBook }) {
   const [serviceType, setServiceType] = useState("self-drive");
   const [pickupLocation, setPickupLocation] = useState("Bandaranaike Int'l Airport (CMB Katunayake)");
   const [dropoffLocation, setDropoffLocation] = useState("Bandaranaike Int'l Airport (CMB Katunayake)");
+  const [customRouteData, setCustomRouteData] = useState(null);
   
   // Default dates: tomorrow to 5 days later
   const tomorrow = new Date();
@@ -32,8 +34,11 @@ export default function Hero({ onSearchSubmit, onQuickBook }) {
 
   // Compute live route distance and directions
   const routeDetails = useMemo(() => {
+    if (customRouteData && customRouteData.pickup === pickupLocation && customRouteData.dropoff === dropoffLocation) {
+      return customRouteData;
+    }
     return getRouteDetails(pickupLocation, dropoffLocation);
-  }, [pickupLocation, dropoffLocation]);
+  }, [pickupLocation, dropoffLocation, customRouteData]);
 
   const calculateDays = () => {
     const start = new Date(pickupDate);
@@ -222,14 +227,23 @@ export default function Hero({ onSearchSubmit, onQuickBook }) {
                     value={pickupLocation}
                     onChange={(e) => {
                       setPickupLocation(e.target.value);
-                      setIsRouteMapOpen(true);
+                      setCustomRouteData(null);
                     }}
                     className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-gold transition-colors font-medium cursor-pointer"
                   >
-                    {companyInfo.locations.map((loc, idx) => (
-                      <option key={idx} value={loc} className="bg-slate-900 text-white">
-                        {loc}
+                    {pickupLocation && !popularSriLankaDestinations.some((d) => d.name === pickupLocation) && (
+                      <option value={pickupLocation} className="bg-slate-900 text-brand-gold font-bold">
+                        📍 {pickupLocation} (Custom Pinned Location)
                       </option>
+                    )}
+                    {destinationGroups.map((grp, gIdx) => (
+                      <optgroup key={gIdx} label={grp.category} className="bg-slate-950 text-brand-gold font-bold">
+                        {grp.destinations.map((loc, idx) => (
+                          <option key={idx} value={loc} className="bg-slate-900 text-white font-normal">
+                            {loc}
+                          </option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </div>
@@ -255,14 +269,23 @@ export default function Hero({ onSearchSubmit, onQuickBook }) {
                     value={dropoffLocation}
                     onChange={(e) => {
                       setDropoffLocation(e.target.value);
-                      setIsRouteMapOpen(true);
+                      setCustomRouteData(null);
                     }}
                     className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-gold transition-colors font-medium cursor-pointer"
                   >
-                    {companyInfo.locations.map((loc, idx) => (
-                      <option key={idx} value={loc} className="bg-slate-900 text-white">
-                        {loc}
+                    {dropoffLocation && !popularSriLankaDestinations.some((d) => d.name === dropoffLocation) && (
+                      <option value={dropoffLocation} className="bg-slate-900 text-amber-400 font-bold">
+                        🏁 {dropoffLocation} (Custom Destination)
                       </option>
+                    )}
+                    {destinationGroups.map((grp, gIdx) => (
+                      <optgroup key={gIdx} label={grp.category} className="bg-slate-950 text-brand-gold font-bold">
+                        {grp.destinations.map((loc, idx) => (
+                          <option key={idx} value={loc} className="bg-slate-900 text-white font-normal">
+                            {loc}
+                          </option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </div>
@@ -439,6 +462,14 @@ export default function Hero({ onSearchSubmit, onQuickBook }) {
           onSelectRoute={(data) => {
             setPickupLocation(data.pickup);
             setDropoffLocation(data.dropoff);
+            setCustomRouteData({
+              pickup: data.pickup,
+              dropoff: data.dropoff,
+              distanceKm: data.distanceKm,
+              durationText: data.durationText,
+              highway: `${data.distanceKm} km via Sri Lanka Highway Route`,
+              googleMapsDirUrl: data.googleMapsDirUrl
+            });
           }}
         />
       )}

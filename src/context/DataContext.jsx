@@ -14,6 +14,11 @@ import {
   syncInitialFleetToCloud,
   isFirebaseConfigured
 } from "../services/firebase";
+import {
+  getLocalSyncData,
+  pushBookingToLocalSync,
+  pushAllBookingsToLocalSync
+} from "../services/localSync";
 
 const DataContext = createContext(null);
 
@@ -168,6 +173,35 @@ export function DataProvider({ children }) {
     }
   }, []);
 
+  // Cross-port local synchronization (Customer app <-> Admin Portal)
+  useEffect(() => {
+    // Initial fetch from shared local sync
+    getLocalSyncData().then((syncData) => {
+      if (syncData && Array.isArray(syncData.bookings) && syncData.bookings.length > 0) {
+        setBookings(syncData.bookings);
+      }
+    }).catch(() => {});
+
+    // Fast polling in local development when Firebase is not yet active
+    if (!isFirebaseConfigured()) {
+      const interval = setInterval(async () => {
+        try {
+          const syncData = await getLocalSyncData();
+          if (syncData && Array.isArray(syncData.bookings)) {
+            setBookings((prev) => {
+              if (JSON.stringify(prev) !== JSON.stringify(syncData.bookings)) {
+                return syncData.bookings;
+              }
+              return prev;
+            });
+          }
+        } catch {}
+      }, 2500);
+
+      return () => clearInterval(interval);
+    }
+  }, []);
+
   // Save fleet changes to localStorage
   useEffect(() => {
     try {
@@ -287,6 +321,8 @@ export function DataProvider({ children }) {
 
     setBookings((prev) => [newRecord, ...prev]);
     saveBookingToDb(newRecord);
+    // Push immediately to local sync bridge
+    pushBookingToLocalSync(newRecord).catch((err) => console.warn("Local sync push error:", err));
     return newRecord;
   };
 

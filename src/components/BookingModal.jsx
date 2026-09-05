@@ -11,6 +11,7 @@ import { formatPrice } from "../utils/currency";
 import { generateBookingPDF } from "../utils/pdfGenerator";
 import { WhatsAppIcon } from "./icons/WhatsAppIcon";
 import { getRouteDetails } from "../utils/routeCalculator";
+import { destinationGroups, popularSriLankaDestinations } from "../utils/sriLankaGeo";
 import RouteMapModal from "./RouteMapModal";
 
 export default function BookingModal({ 
@@ -35,12 +36,16 @@ export default function BookingModal({
   const [serviceType, setServiceType] = useState(prefilledData?.serviceType || prefilledData?.hireMode || "self-drive");
   const [pickupLoc, setPickupLoc] = useState(prefilledData?.pickupLocation || "Bandaranaike Int'l Airport (CMB Katunayake)");
   const [dropoffLoc, setDropoffLoc] = useState(prefilledData?.dropoffLocation || "Bandaranaike Int'l Airport (CMB Katunayake)");
+  const [customRouteData, setCustomRouteData] = useState(null);
   const [isRouteMapOpen, setIsRouteMapOpen] = useState(false);
 
   // Compute live route distance in km
   const routeDetails = useMemo(() => {
+    if (customRouteData && customRouteData.pickup === pickupLoc && customRouteData.dropoff === dropoffLoc) {
+      return customRouteData;
+    }
     return getRouteDetails(pickupLoc, dropoffLoc);
-  }, [pickupLoc, dropoffLoc]);
+  }, [pickupLoc, dropoffLoc, customRouteData]);
   
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -292,6 +297,8 @@ export default function BookingModal({
         status: "pending",
         tripPurpose,
         drivingLicenseStatus,
+        distanceKm: routeDetails?.distanceKm || 0,
+        destinationsPlanned: destinationsPlanned || `${pickupLoc} ➔ ${dropoffLoc} (${routeDetails?.distanceKm || 0} km)`,
         notes
       });
     }
@@ -571,12 +578,23 @@ export default function BookingModal({
                         value={pickupLoc}
                         onChange={(e) => {
                           setPickupLoc(e.target.value);
-                          setIsRouteMapOpen(true);
+                          setCustomRouteData(null);
                         }}
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-brand-navy cursor-pointer"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-brand-navy cursor-pointer font-medium"
                       >
-                        {companyInfo.locations.map((loc, idx) => (
-                          <option key={idx} value={loc}>{loc}</option>
+                        {pickupLoc && !popularSriLankaDestinations.some((d) => d.name === pickupLoc) && (
+                          <option value={pickupLoc} className="bg-slate-100 text-brand-navy font-bold">
+                            📍 {pickupLoc} (Custom Pinned Location)
+                          </option>
+                        )}
+                        {destinationGroups.map((grp, gIdx) => (
+                          <optgroup key={gIdx} label={grp.category} className="font-bold text-brand-navy bg-slate-100">
+                            {grp.destinations.map((loc, idx) => (
+                              <option key={idx} value={loc} className="font-normal text-slate-800 bg-white">
+                                {loc}
+                              </option>
+                            ))}
+                          </optgroup>
                         ))}
                       </select>
                     </div>
@@ -600,12 +618,23 @@ export default function BookingModal({
                         value={dropoffLoc}
                         onChange={(e) => {
                           setDropoffLoc(e.target.value);
-                          setIsRouteMapOpen(true);
+                          setCustomRouteData(null);
                         }}
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-brand-navy cursor-pointer"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-brand-navy cursor-pointer font-medium"
                       >
-                        {companyInfo.locations.map((loc, idx) => (
-                          <option key={idx} value={loc}>{loc}</option>
+                        {dropoffLoc && !popularSriLankaDestinations.some((d) => d.name === dropoffLoc) && (
+                          <option value={dropoffLoc} className="bg-slate-100 text-amber-700 font-bold">
+                            🏁 {dropoffLoc} (Custom Destination)
+                          </option>
+                        )}
+                        {destinationGroups.map((grp, gIdx) => (
+                          <optgroup key={gIdx} label={grp.category} className="font-bold text-brand-navy bg-slate-100">
+                            {grp.destinations.map((loc, idx) => (
+                              <option key={idx} value={loc} className="font-normal text-slate-800 bg-white">
+                                {loc}
+                              </option>
+                            ))}
+                          </optgroup>
                         ))}
                       </select>
                     </div>
@@ -1102,6 +1131,14 @@ export default function BookingModal({
           onSelectRoute={(data) => {
             setPickupLoc(data.pickup);
             setDropoffLoc(data.dropoff);
+            setCustomRouteData({
+              pickup: data.pickup,
+              dropoff: data.dropoff,
+              distanceKm: data.distanceKm,
+              durationText: data.durationText,
+              routeStyle: data.routeStyle
+            });
+            setDestinationsPlanned(`${data.pickup} ➔ ${data.dropoff} (${data.distanceKm} km via ${data.routeStyle || "Main Route"})`);
           }}
         />
       )}

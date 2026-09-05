@@ -1,4 +1,6 @@
-﻿// Location coordinates & route calculation engine for Sri Lanka
+import { resolveLocationObject, popularSriLankaDestinations } from "./sriLankaGeo";
+
+// Location coordinates & route calculation engine for Sri Lanka
 export const sriLankaLocations = {
   "Piliyandala (Head Office - Polgasowita Rd)": {
     name: "Piliyandala Head Office",
@@ -303,19 +305,8 @@ export function getRouteDetails(pickupLocName, dropoffLocName) {
     isReversed = true;
   }
 
-  const pickup = sriLankaLocations[pickupLocName] || {
-    name: pickupLocName,
-    address: pickupLocName,
-    lat: 6.8018,
-    lng: 79.9227
-  };
-
-  const dropoff = sriLankaLocations[dropoffLocName] || {
-    name: dropoffLocName,
-    address: dropoffLocName,
-    lat: 7.1808,
-    lng: 79.8841
-  };
+  const pickup = sriLankaLocations[pickupLocName] || resolveLocationObject(pickupLocName);
+  const dropoff = sriLankaLocations[dropoffLocName] || resolveLocationObject(dropoffLocName);
 
   if (matchedRoute) {
     const waypoints = isReversed ? [...matchedRoute.waypoints].reverse() : matchedRoute.waypoints;

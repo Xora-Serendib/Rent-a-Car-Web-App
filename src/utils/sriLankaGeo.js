@@ -1,4 +1,4 @@
-﻿// Sri Lanka Comprehensive Geo & Dynamic Routing Engine
+// Sri Lanka Comprehensive Geo & Dynamic Routing Engine
 
 // 40+ Pre-mapped hubs, cities, beaches and tourist landmarks across Sri Lanka
 export const popularSriLankaDestinations = [
@@ -185,3 +185,133 @@ export async function calculateDynamicRoute(pickup, dropoff, routeStyle = "expre
     googleMapsDirUrl: `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(pickup.name || pickup.lat + ',' + pickup.lng)}&destination=${encodeURIComponent(dropoff.name || dropoff.lat + ',' + dropoff.lng)}&travelmode=driving`
   };
 }
+
+// Categorized Destination Groups for Dropdowns & Selectors
+export const destinationGroups = [
+  {
+    category: "Danusha Hubs & Airports",
+    destinations: [
+      "Piliyandala (Head Office - Polgasowita Rd)",
+      "Bandaranaike Int'l Airport (CMB Katunayake)",
+      "Kesbewa Town Junction",
+      "Kottawa / Makumbura Multimodal Hub",
+      "Hambantota / Mattala Airport (HRI)"
+    ]
+  },
+  {
+    category: "Western Province & Colombo",
+    destinations: [
+      "Colombo Fort / Galle Face / Port City",
+      "Mount Lavinia Beach / Dehiwala",
+      "Negombo Beach / Hotel Strip",
+      "Kalutara / Wadduwa Beach"
+    ]
+  },
+  {
+    category: "Southern Coast & Beaches",
+    destinations: [
+      "Bentota / Induruwa Beach",
+      "Hikkaduwa Coral Reef & Surf Beach",
+      "Galle Fort / Lighthouse",
+      "Unawatuna Beach / Jungle Beach",
+      "Weligama Bay / Surf Point",
+      "Mirissa Beach / Coconut Tree Hill",
+      "Matara Town / Polhena Beach",
+      "Hiriketiya Bay / Dikwella",
+      "Tangalle / Goyambokka Beach",
+      "Yala National Park / Palatupana Entrance",
+      "Tissamaharama Town & Lake"
+    ]
+  },
+  {
+    category: "Central Highlands & Tea Country",
+    destinations: [
+      "Kandy City / Temple of the Sacred Tooth",
+      "Peradeniya Royal Botanical Gardens",
+      "Nuwara Eliya / Gregory Lake / Little England",
+      "Ella Town / Nine Arches Bridge",
+      "Haputale / Lipton's Seat",
+      "Hatton / Adam's Peak (Sri Pada)",
+      "Kitulgala / White Water Rafting",
+      "Pinnawala Elephant Orphanage"
+    ]
+  },
+  {
+    category: "Cultural Triangle & Heritage",
+    destinations: [
+      "Sigiriya Lion Rock Fortress",
+      "Dambulla Golden Cave Temple",
+      "Anuradhapura Sacred Ancient City",
+      "Polonnaruwa Ancient Kingdom Ruins",
+      "Minneriya / Kaudulla Elephant Gathering",
+      "Wilpattu National Park"
+    ]
+  },
+  {
+    category: "Eastern & Northern Provinces",
+    destinations: [
+      "Trincomalee / Nilaveli Beach / Pigeon Island",
+      "Arugam Bay Surf Point & Main Street",
+      "Pasikuda / Kalkudah Bay",
+      "Jaffna City / Nallur Kandaswamy Kovil"
+    ]
+  }
+];
+
+// Resolves any string or pin into a valid geographic location object with accurate lat/lng
+export function resolveLocationObject(nameOrString) {
+  if (!nameOrString) return popularSriLankaDestinations[1]; // default Airport
+
+  if (typeof nameOrString === "object" && nameOrString.lat && nameOrString.lng) {
+    return nameOrString;
+  }
+
+  const str = String(nameOrString).trim();
+
+  // 1. Exact match in popular destinations
+  const exact = popularSriLankaDestinations.find((d) => d.name.toLowerCase() === str.toLowerCase());
+  if (exact) return exact;
+
+  // 2. Specific alias lookups
+  if (str.includes("Airport") || str.includes("CMB") || str.includes("Katunayake")) {
+    return popularSriLankaDestinations[1]; // BIA
+  }
+  if (str.includes("Piliyandala") || str.includes("Polgasowita")) {
+    return popularSriLankaDestinations[0]; // Piliyandala Head Office
+  }
+  if (str.includes("Colombo")) {
+    return popularSriLankaDestinations[2]; // Colombo Fort
+  }
+
+  // 3. Partial match
+  const partial = popularSriLankaDestinations.find(
+    (d) => str.toLowerCase().includes(d.name.toLowerCase()) || d.name.toLowerCase().includes(str.toLowerCase())
+  );
+  if (partial) return partial;
+
+  // 4. Coordinates extraction: e.g. "Pinned Location (6.850, 80.120)" or "6.850, 80.120"
+  const coordMatch = str.match(/(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)/);
+  if (coordMatch) {
+    const lat = parseFloat(coordMatch[1]);
+    const lng = parseFloat(coordMatch[2]);
+    if (!isNaN(lat) && !isNaN(lng) && lat >= 5.5 && lat <= 10.0 && lng >= 79.5 && lng <= 82.5) {
+      return {
+        name: str,
+        address: `Custom Pinned Point (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
+        lat,
+        lng,
+        category: "Custom Pinned"
+      };
+    }
+  }
+
+  // 5. Fallback object
+  return {
+    name: str,
+    address: str,
+    lat: 7.1808,
+    lng: 79.8841,
+    category: "Sri Lanka Destination"
+  };
+}
+

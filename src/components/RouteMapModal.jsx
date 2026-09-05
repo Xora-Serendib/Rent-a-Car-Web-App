@@ -4,7 +4,7 @@ import {
   ShieldCheck, Fuel, ExternalLink, Sparkles, CheckCircle2, Car, Compass,
   Search, Plus, Trash2, Milestone, Layers, Route
 } from "lucide-react";
-import { popularSriLankaDestinations, calculateDynamicRoute } from "../utils/sriLankaGeo";
+import { popularSriLankaDestinations, calculateDynamicRoute, calculateDirectKm, resolveLocationObject } from "../utils/sriLankaGeo";
 import { companyInfo } from "../data/companyInfo";
 import { WhatsAppIcon } from "./icons/WhatsAppIcon";
 import RouteInteractiveMap from "./RouteInteractiveMap";
@@ -18,15 +18,11 @@ export default function RouteMapModal({
 }) {
   // Find initial location objects
   const defaultPickup = useMemo(() => {
-    return popularSriLankaDestinations.find(
-      (d) => d.name === initialPickup || d.name.includes("Airport")
-    ) || popularSriLankaDestinations[1];
+    return resolveLocationObject(initialPickup);
   }, [initialPickup]);
 
   const defaultDropoff = useMemo(() => {
-    return popularSriLankaDestinations.find(
-      (d) => d.name === initialDropoff || d.name.includes("Piliyandala")
-    ) || popularSriLankaDestinations[0];
+    return resolveLocationObject(initialDropoff);
   }, [initialDropoff]);
 
   const [pickupPoint, setPickupPoint] = useState(defaultPickup);
@@ -131,14 +127,21 @@ export default function RouteMapModal({
   };
 
   const handleApply = () => {
-    if (onSelectRoute && route) {
+    const directKm = calculateDirectKm(pickupPoint.lat, pickupPoint.lng, dropoffPoint.lat, dropoffPoint.lng);
+    const calculatedKm = route?.distanceKm || Math.max(1, Math.round(directKm * (routeStyle === "hill_country" ? 1.55 : 1.32)));
+    const calculatedDuration = route?.durationText || `~${Math.round(calculatedKm / 45)} hrs`;
+
+    if (onSelectRoute) {
       onSelectRoute({
         pickup: pickupPoint.name,
         dropoff: dropoffPoint.name,
-        distanceKm: route.distanceKm,
-        durationText: route.durationText,
+        pickupPoint,
+        dropoffPoint,
+        distanceKm: calculatedKm,
+        durationText: calculatedDuration,
         routeStyle,
-        waypointsCount: waypoints.length
+        waypointsCount: waypoints.length,
+        googleMapsDirUrl: route?.googleMapsDirUrl
       });
     }
     onClose();
