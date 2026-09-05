@@ -20,3 +20,6 @@ export const formatPrice = (amountLkr, currencyCode = "LKR", showDecimals = fals
 
   return `${curr.symbol}${formattedNum}`;
 };
+
+export const formatLKR = (amountLkr) => formatPrice(amountLkr, "LKR");
+
