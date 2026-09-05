@@ -5,7 +5,7 @@ import {
 import { companyInfo } from "../data/companyInfo";
 import { WhatsAppIcon } from "./icons/WhatsAppIcon";
 
-export default function Footer({ onOpenBookingModal, onOpenAdminPortal }) {
+export default function Footer({ onOpenBookingModal }) {
   return (
     <footer className="bg-slate-950 text-slate-400 text-xs border-t border-slate-800">
       
@@ -149,15 +149,6 @@ export default function Footer({ onOpenBookingModal, onOpenAdminPortal }) {
           </div>
 
           <div className="flex items-center gap-4 flex-wrap justify-center">
-            <button
-              type="button"
-              onClick={() => onOpenAdminPortal && onOpenAdminPortal()}
-              className="inline-flex items-center gap-1.5 text-amber-400 hover:text-amber-300 font-semibold transition-colors cursor-pointer bg-amber-500/10 hover:bg-amber-500/20 px-2.5 py-1 rounded border border-amber-500/30 text-[11px]"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>Owner Portal (Authorized)</span>
-            </button>
-
             <div className="flex items-center gap-2 text-slate-300">
               <span className="text-slate-400">Accepted:</span>
               <span className="bg-slate-900 px-2 py-0.5 rounded border border-slate-800">Visa</span>

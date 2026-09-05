@@ -13,7 +13,6 @@ import Footer from "./components/Footer";
 import VehicleModal from "./components/VehicleModal";
 import BookingModal from "./components/BookingModal";
 import FloatingActions from "./components/FloatingActions";
-import AdminPortalModal from "./components/admin/AdminPortalModal";
 import { useData } from "./context/DataContext";
 
 export default function App() {
@@ -22,20 +21,7 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedVehicleForModal, setSelectedVehicleForModal] = useState(null);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
-  const [adminPortalOpen, setAdminPortalOpen] = useState(false);
   const [bookingPrefill, setBookingPrefill] = useState({});
-
-  // Auto-open admin portal if URL hash is #admin
-  useEffect(() => {
-    const handleHashCheck = () => {
-      if (window.location.hash === "#admin" || window.location.pathname === "/admin") {
-        setAdminPortalOpen(true);
-      }
-    };
-    handleHashCheck();
-    window.addEventListener("hashchange", handleHashCheck);
-    return () => window.removeEventListener("hashchange", handleHashCheck);
-  }, []);
 
   // 1. From Hero Search
   const handleHeroSearchSubmit = (searchParams) => {
@@ -200,7 +186,6 @@ export default function App() {
       {/* Global Footer */}
       <Footer 
         onOpenBookingModal={() => handleOpenQuickBook()}
-        onOpenAdminPortal={() => setAdminPortalOpen(true)}
       />
 
       {/* Full Vehicle Specs Modal */}
@@ -225,14 +210,6 @@ export default function App() {
           prefilledData={bookingPrefill}
           fleet={fleet}
           onBookingCreated={(b) => addBooking(b)}
-        />
-      )}
-
-      {/* Owner Admin Portal & Availability Dashboard */}
-      {adminPortalOpen && (
-        <AdminPortalModal
-          isOpen={adminPortalOpen}
-          onClose={() => setAdminPortalOpen(false)}
         />
       )}
 

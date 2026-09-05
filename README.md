@@ -57,7 +57,6 @@ git push -u origin main
    - `VITE_FIREBASE_STORAGE_BUCKET`
    - `VITE_FIREBASE_MESSAGING_SENDER_ID`
    - `VITE_FIREBASE_APP_ID`
-   - `VITE_ADMIN_PORTAL_URL` (URL of your deployed admin portal)
 6. Click **"Deploy"**. Your customer website will be live in ~30 seconds!
 
 ---

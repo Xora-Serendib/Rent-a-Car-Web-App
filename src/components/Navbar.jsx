@@ -7,7 +7,7 @@ import { companyInfo } from "../data/companyInfo";
 import { currencies } from "../utils/currency";
 import { WhatsAppIcon } from "./icons/WhatsAppIcon";
 
-export default function Navbar({ selectedCurrency, onCurrencyChange, onOpenBookingModal, onOpenAdminPortal }) {
+export default function Navbar({ selectedCurrency, onCurrencyChange, onOpenBookingModal }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [fleetDropdownOpen, setFleetDropdownOpen] = useState(false);
@@ -56,7 +56,7 @@ export default function Navbar({ selectedCurrency, onCurrencyChange, onOpenBooki
           <div className="flex items-center gap-4 ml-auto">
             <a 
               href={companyInfo.contacts.googleMapsUrl}
-              target="_blank"
+              target="_blank" 
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1.5 text-[11px] bg-slate-800 text-brand-gold px-2.5 py-0.5 rounded-full border border-slate-700 font-medium hover:border-brand-gold transition-colors"
             >
@@ -79,17 +79,6 @@ export default function Navbar({ selectedCurrency, onCurrencyChange, onOpenBooki
                 ))}
               </select>
             </div>
-
-            {/* Owner Portal Quick Access */}
-            <button
-              type="button"
-              onClick={() => onOpenAdminPortal && onOpenAdminPortal()}
-              className="inline-flex items-center gap-1.5 text-[11px] bg-amber-500/10 hover:bg-amber-500/25 text-amber-400 px-2.5 py-1 rounded-md border border-amber-500/30 font-semibold transition-all cursor-pointer shadow-sm"
-              title="Authorized Owner Login (Mr. Danusha)"
-            >
-              <Shield className="w-3.5 h-3.5 text-amber-400" />
-              <span>Owner Portal</span>
-            </button>
           </div>
         </div>
       </div>
@@ -278,18 +267,6 @@ export default function Navbar({ selectedCurrency, onCurrencyChange, onOpenBooki
             >
               Branch Offices & Contact
             </a>
-
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (onOpenAdminPortal) onOpenAdminPortal();
-              }}
-              className="w-full text-left px-4 py-2.5 text-amber-400 font-semibold rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 flex items-center gap-2 transition-colors cursor-pointer"
-            >
-              <Shield className="w-4 h-4 text-amber-400" />
-              <span>Owner Portal (Authorized Access)</span>
-            </button>
 
             <div className="pt-4 px-3 flex flex-col gap-2">
               <a 
